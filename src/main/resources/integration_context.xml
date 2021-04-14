@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+
+       http://www.springframework.org/schema/integration
+       http://www.springframework.org/schema/integration/spring-integration-5.2.xsd
+
+       http://www.springframework.org/schema/integration/jms
+       http://www.springframework.org/schema/integration/spring-integration-jms-5.2.xsd">
+
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://localhost"
+            </bean>
+        </property>
+    </bean>
+
+
+    <int:gateway id="gateway" service-interface="ru.volkov.integration.jdbc.CircuitGateway" default-request-channel="inboundChannel"/>
+    "/>
+
+    <bean id="mp" class="ru.volkov.integration.jms.MessagePrinter"/>
+
+    <int:service-activator ref="mp" method="print" input-channel="jmsChannel"/>
+
+    <int:channel id="jmsChannel"/>
+    <int:channel id="inboundChannel"/>
+
+</beans>
